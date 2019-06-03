@@ -1,0 +1,62 @@
+<!-- main app container -->
+<div class="container">
+	<ngx-spinner
+	bdColor="rgba(51,51,51,0.8)"
+	size="medium"
+	color="#fff"
+	type="ball-scale-multiple">
+	<p class="loader-title">Loading...</p>
+	</ngx-spinner>
+	<div class="row">
+		<div class="col-md-8 offset-md-2">
+			<h2 class="mb-5">Welcome to BOM (Sydney) Weather API demo</h2>
+			<form name="weatherAPIForm" (ngSubmit)="f.form.valid && submit()" #f="ngForm">
+				<div class="form-group col-md-6">
+					<label for="Day">Select Day</label>
+					<select class="ml-2 mdb-select md-form colorful-select dropdown-primary form-control"
+					id="dayInput" name="dayInput" 
+					[ngClass]="{ 'is-invalid': f.submitted && dayInput.value === '0' }"
+					[(ngModel)]="model.dayInput" #dayInput="ngModel" required (change)="change()">
+						<option value="0">Select Day</option>
+						<option value="1">Today</option>
+						<option value="2">Monday</option>
+						<option value="3">Tuesday</option>
+						<option value="4">Wednesday</option>
+						<option value="5">Thursday</option>
+						<option value="6">Friday</option>
+						<option value="7">Saturday</option>
+						<option value="8">Sunday</option>
+					</select>
+					
+					<div *ngIf="f.submitted && dayInput.value === '0'" class="invalid-feedback">
+						Day is required
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="Location">Location</label>
+					<input maxlength="512" placeholder="Enter location or address" 
+					type="text" id="location"  id="locationInput" name="locationInput" required
+					[(ngModel)]="model.locationInput" 
+					[ngClass]="{ 'is-invalid': f.submitted && locationInput.invalid}"
+					#locationInput="ngModel" class="form-control">
+					<div *ngIf="f.submitted && locationInput.invalid" class="invalid-feedback">
+						<div *ngIf="locationInput.errors.required">Valid Location is required</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="Weather API Output">Weather API data output</label>
+					<textarea class="form-control" id="weatherDataOutput" name="weatherDataOutput"
+					[(ngModel)]="model.weatherDataOutput" #weatherDataOutput="ngModel" 
+					rows="10" readonly></textarea>
+				</div>
+
+				<div class="form-group">
+					<button class="btn btn-primary">Get Weather Data</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
