@@ -11,8 +11,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class WeatherAPIComponent implements OnInit {
   model: any = {};
   latLong: any;
-  weekDays: string[] = ['Monday', 'Tuesday', 'Wednesday',
-  'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  weekDays: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   constructor(private weatherAPIService: WeatherAPIService, private spinner: NgxSpinnerService) {}
 
@@ -21,39 +20,43 @@ export class WeatherAPIComponent implements OnInit {
   }
 
   invokeWeatherService() {
-    const day = (this.weekDays[this.model.dayInput-3]) ? this.weekDays[this.model.dayInput-3] : 
-      this.model.dayInput-3 === -1 ? 'Today' : this.model.dayInput-3 === -2 ? 'Whole week' : null;
+    const day = this.weekDays[this.model.dayInput - 3]
+      ? this.weekDays[this.model.dayInput - 3]
+      : this.model.dayInput - 3 === -1
+        ? 'Today'
+        : this.model.dayInput - 3 === -2
+          ? 'Whole week'
+          : null;
     if (day && this.model.locationInput) {
-    this.spinner.show(); // show spinner
+      this.spinner.show(); // show spinner
 
-    this.weatherAPIService.getLatLong(this.model.locationInput).subscribe(response => {
-      this.latLong = response.results[1];
-      // get weather data
-      const param = this.latLong && this.latLong.geometry;
-      
+      this.weatherAPIService.getLatLong(this.model.locationInput).subscribe(response => {
+        this.latLong = response.results[1];
+        // get weather data
+        const param = this.latLong && this.latLong.geometry;
 
-      console.log(day, 'submit() day');
-      const payload = {day: day, latLong : this.latLong && this.latLong.geometry};
+        console.log(day, 'submit() day');
+        const payload = { day: day, latLong: this.latLong && this.latLong.geometry };
 
-      if (day === 'Whole week') {
-        this.weatherAPIService.getWeatherDataForLocation(payload, this.model).subscribe(result => {
-          console.log(result, 'this is the response of weather forecast for whole week');
-        });
-      } else if (day === 'Today') {
-        this.weatherAPIService.getWeatherDataForToday(payload, this.model).subscribe(result => {
-          console.log(result, 'this is the response of weather forecast for today');
-        });
-      } else {
-        this.weatherAPIService.getWeatherDataForWeekday({day: day, latLong : param}, this.model).subscribe(result => {
-          console.log(result, 'this is the response of weather forecast for weekday');
-        });
-      }
-      // hide spinner
-      setTimeout(() => {
-        this.spinner.hide();
-      }, 2000);
-    });
-  }
+        if (day === 'Whole week') {
+          this.weatherAPIService.getWeatherDataForLocation(payload, this.model).subscribe(result => {
+            console.log(result, 'this is the response of weather forecast for whole week');
+          });
+        } else if (day === 'Today') {
+          this.weatherAPIService.getWeatherDataForToday(payload, this.model).subscribe(result => {
+            console.log(result, 'this is the response of weather forecast for today');
+          });
+        } else {
+          this.weatherAPIService.getWeatherDataForWeekday({ day: day, latLong: param }, this.model).subscribe(result => {
+            console.log(result, 'this is the response of weather forecast for weekday');
+          });
+        }
+        // hide spinner
+        setTimeout(() => {
+          this.spinner.hide();
+        }, 2000);
+      });
+    }
   }
 
   submit() {
