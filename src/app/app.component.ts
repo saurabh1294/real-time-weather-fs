@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { WeatherAPIService } from './shared/services/real-time-weather-api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import JSONEditor from 'jsoneditor/dist/jsoneditor.min.js';
 
 /** @title Simple weather API component */
 @Component({
@@ -11,12 +12,27 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class WeatherAPIComponent implements OnInit {
   model: any = {};
   latLong: any;
+  editor: any;
   weekDays: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   constructor(private weatherAPIService: WeatherAPIService, private spinner: NgxSpinnerService) {}
 
   ngOnInit() {
     this.model.dayInput = '0';
+
+    // create the editor
+    const container = document.getElementById('jsoneditor');
+    this.editor = new JSONEditor(container);
+    // set some sample json in the jsoneditor initially
+    const json = {
+      Array: [1, 2, 3],
+      Boolean: true,
+      Null: null,
+      Number: 123,
+      Object: { a: 'b', c: 'd' },
+      String: 'Sample JSON'
+    };
+    this.editor.set(json);
   }
 
   invokeWeatherService() {
@@ -27,10 +43,11 @@ export class WeatherAPIComponent implements OnInit {
         : this.model.dayInput - 3 === -2
           ? 'Whole week'
           : null;
+
     if (day && this.model.locationInput) {
       this.spinner.show(); // show spinner
 
-      this.weatherAPIService.getLatLong(this.model.locationInput).subscribe(response => {
+      this.weatherAPIService.getLatLong(this.model.locationInput, this.model, this.spinner).subscribe(response => {
         this.latLong = response.results[1];
         // get weather data
         const param = this.latLong && this.latLong.geometry;
@@ -41,14 +58,17 @@ export class WeatherAPIComponent implements OnInit {
         if (day === 'Whole week') {
           this.weatherAPIService.getWeatherDataForLocation(payload, this.model).subscribe(result => {
             console.log(result, 'this is the response of weather forecast for whole week');
+            this.setJSON(result);
           });
         } else if (day === 'Today') {
           this.weatherAPIService.getWeatherDataForToday(payload, this.model).subscribe(result => {
             console.log(result, 'this is the response of weather forecast for today');
+            this.setJSON(result);
           });
         } else {
           this.weatherAPIService.getWeatherDataForWeekday({ day: day, latLong: param }, this.model).subscribe(result => {
             console.log(result, 'this is the response of weather forecast for weekday');
+            this.setJSON(result);
           });
         }
         // hide spinner
@@ -57,6 +77,11 @@ export class WeatherAPIComponent implements OnInit {
         }, 2000);
       });
     }
+  }
+
+  setJSON(json) {
+    this.editor.set(json);
+    this.model.weatherDataOutput = JSON.stringify(json, null, 4);
   }
 
   submit() {

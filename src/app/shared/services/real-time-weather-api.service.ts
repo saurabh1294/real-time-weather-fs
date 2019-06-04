@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { Observable, throwError } from 'rxjs';
-import { retry, catchError } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root' // singleton service
@@ -24,18 +24,17 @@ export class WeatherAPIService {
       // server-side error
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
-    this.errorOutput.weatherDataOutput = errorMessage;
-    window.alert(errorMessage);
-    return throwError(errorMessage);
+    this.errorOutput.weatherDataOutput = `${errorMessage}. Please check your NodeJS server logs.
+    "Try restarting the server"`;
+    window.alert(this.errorOutput.weatherDataOutput);
+    return throwError(this.errorOutput.weatherDataOutput);
   }
 
-  getLatLong(location): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/getLatLong?q=${location}`).pipe(
-      catchError(err => {
-        console.log('Handling service error locally and rethrowing it...', err);
-        return throwError(err);
-      })
-    );
+  getLatLong(location, model, spinner): Observable<any> {
+    this.errorOutput = model;
+    // hide the spinner after 1 sec.
+    setTimeout(() => spinner.hide(), 1000);
+    return this.http.get<any>(`${this.baseUrl}/getLatLong?q=${location}`).pipe(catchError(err => this.handleError(err)));
   }
 
   getWeatherDataForLocation(data, model): Observable<any> {
