@@ -44,46 +44,18 @@ app.get('/getLatLong/', function(req, res) {
 		.catch((err) => console.error(err));
 });
 
-// app.post('/weather', function(req, res) {
-//     const data = req && req.body && req.body.latLong;
-//     const latLong = `${data.lat},${data.lng}`;
-//     const darkSkyURL = `${darkSkyBaseURL}${DARK_SKY_API_KEY}/${latLong}`;
-//     console.log(darkSkyURL, 'URL');
-//     makeRequest(darkSkyURL)
-// 		.then((data) => res.send(data))
-// 		.catch((err) => console.error(err));
-// });
-
 app.post('/weather/:location', function(req, res) {
     console.log(req.body, req.path, 'sending weather data for location');
-    // const data = req && req.body && req.body.latLong;
-    // const darkSkyURL = `${darkSkyBaseURL}${DARK_SKY_API_KEY}/${data.latLong.lat},${data.latLong.lng}`;
-    // makeRequest(darkSkyURL)
-	// 	.then((data) => res.send(data))
-    // 	.catch((err) => console.error(err));
     fireRequest(req, res);
 });
 
 app.post('/weather/:location/:weekday', function(req, res) {
     console.log(req.body, req.path, 'sending weather data for weekday');
-    // const data = req && req.body && req.body.latLong;
-    // const day = req && req.body && req.body.day;
-    // const darkSkyURL = `${darkSkyBaseURL}${DARK_SKY_API_KEY}/${data.latLong.lat},${data.latLong.lng}`;
-    // console.log(darkSkyURL, day, 'URL');
-    // makeRequest(darkSkyURL)
-	// 	.then((data) => res.send(data))
-    // 	.catch((err) => console.error(err));
     fireRequest(req, res, true);
 });
 
 app.post('/weather/:location/today', function(req, res) {
     console.log(req.body, req.path, 'sending weather data for today');
-    // const data = req && req.body && req.body.latLong;
-    // const darkSkyURL = `${darkSkyBaseURL}${DARK_SKY_API_KEY}/${data.latLong.lat},${data.latLong.lng}`;
-    // console.log(darkSkyURL, 'URL');
-    // makeRequest(darkSkyURL)
-	// 	.then((data) => res.send(data))
-    // 	.catch((err) => console.error(err));
     fireRequest(req, res);
 });
 
