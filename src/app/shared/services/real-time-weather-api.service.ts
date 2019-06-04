@@ -38,19 +38,19 @@ export class WeatherAPIService {
   }
 
   getWeatherDataForLocation(data, model): Observable<any> {
-    console.log('Request payload', data);
+    console.log('Request payload for all time weather data for locaiton', data);
     this.errorOutput = model;
     return this.http.post<any>(`${this.baseUrl}/weather/Sydney`, { latLong: data }).pipe(catchError(err => this.handleError(err)));
   }
 
   getWeatherDataForWeekday(data, model): Observable<any> {
-    console.log('Request payload', data);
+    console.log('Request payload for weekday', data);
     this.errorOutput = model;
     return this.http.post<any>(`${this.baseUrl}/weather/Sydney/${data}`, { latLong: data }).pipe(catchError(err => this.handleError(err)));
   }
 
   getWeatherDataForToday(data, model): Observable<any> {
-    console.log('Request payload', data);
+    console.log('Request payload for today', data);
     this.errorOutput = model;
     return this.http.post<any>(`${this.baseUrl}/weather/Sydney/today`, { latLong: data }).pipe(catchError(err => this.handleError(err)));
   }

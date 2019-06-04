@@ -42,6 +42,7 @@
     "jsoneditor": "^5.33.0",
     "ngx-spinner": "^6.1.2",
     "node-geocoder": "^3.23.0",
+    "request-promise": "^4.2.4",
     "rxjs": "6.0.0",
     "yarn": "latest",
     "zone.js": "^0.8.26"

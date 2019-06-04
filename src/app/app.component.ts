@@ -52,7 +52,7 @@ export class WeatherAPIComponent implements OnInit {
         // get weather data
         const param = this.latLong && this.latLong.geometry;
 
-        console.log(day, 'submit() day');
+        console.log(day, 'invokeWeatherService() day');
         const payload = { day: day, latLong: this.latLong && this.latLong.geometry };
 
         if (day === 'Whole week') {
@@ -85,7 +85,6 @@ export class WeatherAPIComponent implements OnInit {
   }
 
   submit() {
-    console.log('in submit()', this.model.locationInput);
     this.invokeWeatherService();
   }
 
