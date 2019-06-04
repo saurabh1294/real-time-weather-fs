@@ -18,14 +18,15 @@
 					[ngClass]="{ 'is-invalid': f.submitted && dayInput.value === '0' }"
 					[(ngModel)]="model.dayInput" #dayInput="ngModel" required (change)="change()">
 						<option value="0">Select Day</option>
-						<option value="1">Today</option>
-						<option value="2">Monday</option>
-						<option value="3">Tuesday</option>
-						<option value="4">Wednesday</option>
-						<option value="5">Thursday</option>
-						<option value="6">Friday</option>
-						<option value="7">Saturday</option>
-						<option value="8">Sunday</option>
+						<option value="1">Whole week</option>
+						<option value="2">Today</option>
+						<option value="3">Monday</option>
+						<option value="4">Tuesday</option>
+						<option value="5">Wednesday</option>
+						<option value="6">Thursday</option>
+						<option value="7">Friday</option>
+						<option value="8">Saturday</option>
+						<option value="9">Sunday</option>
 					</select>
 					
 					<div *ngIf="f.submitted && dayInput.value === '0'" class="invalid-feedback">

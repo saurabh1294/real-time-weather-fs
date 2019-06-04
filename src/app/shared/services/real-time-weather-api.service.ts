@@ -29,8 +29,8 @@ export class WeatherAPIService {
     return throwError(errorMessage);
   }
 
-  getLatLong(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/getLatLong?q=44 Harris Street, Harris Park, Sydney, NSW, Australia`).pipe(
+  getLatLong(location): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/getLatLong?q=${location}`).pipe(
       catchError(err => {
         console.log('Handling service error locally and rethrowing it...', err);
         return throwError(err);
@@ -41,7 +41,7 @@ export class WeatherAPIService {
   getWeatherDataForLocation(data, model): Observable<any> {
     console.log('Request payload', data);
     this.errorOutput = model;
-    return this.http.post<any>(`${this.baseUrl}/weather/Sydney/Tuesday`, { latLong: data }).pipe(catchError(err => this.handleError(err)));
+    return this.http.post<any>(`${this.baseUrl}/weather/Sydney`, { latLong: data }).pipe(catchError(err => this.handleError(err)));
   }
 
   getWeatherDataForWeekday(data, model): Observable<any> {

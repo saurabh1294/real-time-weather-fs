@@ -18,46 +18,50 @@ export class WeatherAPIComponent implements OnInit {
 
   ngOnInit() {
     this.model.dayInput = '0';
+  }
+
+  invokeWeatherService() {
+    const day = (this.weekDays[this.model.dayInput-3]) ? this.weekDays[this.model.dayInput-3] : 
+      this.model.dayInput-3 === -1 ? 'Today' : this.model.dayInput-3 === -2 ? 'Whole week' : null;
+    if (day && this.model.locationInput) {
     this.spinner.show(); // show spinner
 
-    this.weatherAPIService.getLatLong().subscribe(response => {
-      console.log(response.results[1]);
+    this.weatherAPIService.getLatLong(this.model.locationInput).subscribe(response => {
       this.latLong = response.results[1];
-
       // get weather data
       const param = this.latLong && this.latLong.geometry;
-      this.weatherAPIService.getWeatherDataForLocation(param, this.model).subscribe(result => {
-        console.log(result, 'this is the response of weather forecast');
-      });
+      
+
+      console.log(day, 'submit() day');
+      const payload = {day: day, latLong : this.latLong && this.latLong.geometry};
+
+      if (day === 'Whole week') {
+        this.weatherAPIService.getWeatherDataForLocation(payload, this.model).subscribe(result => {
+          console.log(result, 'this is the response of weather forecast for whole week');
+        });
+      } else if (day === 'Today') {
+        this.weatherAPIService.getWeatherDataForToday(payload, this.model).subscribe(result => {
+          console.log(result, 'this is the response of weather forecast for today');
+        });
+      } else {
+        this.weatherAPIService.getWeatherDataForWeekday({day: day, latLong : param}, this.model).subscribe(result => {
+          console.log(result, 'this is the response of weather forecast for weekday');
+        });
+      }
       // hide spinner
       setTimeout(() => {
         this.spinner.hide();
       }, 2000);
     });
   }
+  }
 
   submit() {
     console.log('in submit()', this.model.locationInput);
+    this.invokeWeatherService();
   }
 
   change() {
-    const param = (this.weekDays[this.model.dayInput-2]) ? this.weekDays[this.model.dayInput-2] : 
-    this.model.dayInput-2 == -1 ? 'Today' : null;
-    console.log(param);
-    if (param) {
-      /*this.spinner.show(); // show spinner
-
-      if (param === 'Today') {
-        // call web service endpoint for today
-        this.weatherAPIService.getWeatherDataForToday(param, this.model).subscribe(response => {
-          console.log(response, 'this is the response');
-        });
-      } else {
-        // call web service for weekday
-        this.weatherAPIService.getWeatherDataForWeekday(param, this.model).subscribe(response => {
-          console.log(response, 'this is the response');
-        });
-      }*/
-    }
+    this.invokeWeatherService();
   }
 }

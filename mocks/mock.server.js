@@ -2,7 +2,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 const cors = require("cors");
-const NodeGeocoder = require('node-geocoder');
 
 let originsWhitelist = [
     'http://localhost:4200'
@@ -16,22 +15,10 @@ let corsOptions = {
     credentials: true
 }
 
-const DARK_SKY_API_KEY = '<YOUR-DARK-SKY-API-KEY>';
-const GOOGLE_MAPS_API_KEY = '<YOUR-GOOGLE-MAPS-API-KEY>';
-const OPEN_CAGE_API_KEY = '<YOUR-OPEN-CAGE-API-KEY>';
+const DARK_SKY_API_KEY = 'YOUR-DARK-SKY-API-KEY';
+const OPEN_CAGE_API_KEY = 'YOUR-OPEN-CAGE-API-KEY';
 const latLongBaseURL = 'https://api.opencagedata.com/geocode/v1/json';
 const darkSkyBaseURL = 'https://api.darksky.net/forecast/';
-
-
-let options = {
-    provider: 'google',
-    // Optional depending on the providers
-    httpAdapter: 'https', // Default
-    apiKey: GOOGLE_MAPS_API_KEY, // for Mapquest, OpenCage, Google Premier
-    formatter: null         // 'gpx', 'string', ...
-  };
-let geocoder = NodeGeocoder(options);
-
 
 // whitelist domains for CORS/CORB
 app.use(cors(corsOptions));
@@ -57,31 +44,62 @@ app.get('/getLatLong/', function(req, res) {
 		.catch((err) => console.error(err));
 });
 
-app.post('/weather', function(req, res) {
-    const data = req && req.body && req.body.latLong;
-    const latLong = `${data.lat},${data.lng}`;
-    const darkSkyURL = `${darkSkyBaseURL}${DARK_SKY_API_KEY}/${latLong}`;
-    console.log(darkSkyURL, 'URL');
-    makeRequest(darkSkyURL)
-		.then((data) => res.send(data))
-		.catch((err) => console.error(err));
-});
+// app.post('/weather', function(req, res) {
+//     const data = req && req.body && req.body.latLong;
+//     const latLong = `${data.lat},${data.lng}`;
+//     const darkSkyURL = `${darkSkyBaseURL}${DARK_SKY_API_KEY}/${latLong}`;
+//     console.log(darkSkyURL, 'URL');
+//     makeRequest(darkSkyURL)
+// 		.then((data) => res.send(data))
+// 		.catch((err) => console.error(err));
+// });
 
 app.post('/weather/:location', function(req, res) {
-    console.log(req.body, req.path, 'location');
+    console.log(req.body, req.path, 'sending weather data for location');
+    // const data = req && req.body && req.body.latLong;
+    // const darkSkyURL = `${darkSkyBaseURL}${DARK_SKY_API_KEY}/${data.latLong.lat},${data.latLong.lng}`;
+    // makeRequest(darkSkyURL)
+	// 	.then((data) => res.send(data))
+    // 	.catch((err) => console.error(err));
+    fireRequest(req, res);
 });
 
 app.post('/weather/:location/:weekday', function(req, res) {
-    console.log(req.body, req.path, 'weekday');
+    console.log(req.body, req.path, 'sending weather data for weekday');
+    // const data = req && req.body && req.body.latLong;
+    // const day = req && req.body && req.body.day;
+    // const darkSkyURL = `${darkSkyBaseURL}${DARK_SKY_API_KEY}/${data.latLong.lat},${data.latLong.lng}`;
+    // console.log(darkSkyURL, day, 'URL');
+    // makeRequest(darkSkyURL)
+	// 	.then((data) => res.send(data))
+    // 	.catch((err) => console.error(err));
+    fireRequest(req, res, true);
 });
 
 app.post('/weather/:location/today', function(req, res) {
-    console.log(req.body, req.path, 'today');
+    console.log(req.body, req.path, 'sending weather data for today');
+    // const data = req && req.body && req.body.latLong;
+    // const darkSkyURL = `${darkSkyBaseURL}${DARK_SKY_API_KEY}/${data.latLong.lat},${data.latLong.lng}`;
+    // console.log(darkSkyURL, 'URL');
+    // makeRequest(darkSkyURL)
+	// 	.then((data) => res.send(data))
+    // 	.catch((err) => console.error(err));
+    fireRequest(req, res);
 });
 
 const server = app.listen(3456, function() {
     console.log("[mock] mock server listening on port %s...", server.address().port);
 });
+
+const fireRequest = function(req, res, weekday = null) {
+    const data = req && req.body && req.body.latLong;
+    const day = (weekday) ? req && req.body && req.body.day : null;
+    const darkSkyURL = `${darkSkyBaseURL}${DARK_SKY_API_KEY}/${data.latLong.lat},${data.latLong.lng}`;
+    console.log(darkSkyURL, 'URL');
+    makeRequest(darkSkyURL)
+		.then((data) => res.send(data))
+		.catch((err) => console.error(err));
+}
 
 const makeRequest = function(url) {
 	// return new pending promise
